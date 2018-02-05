@@ -8,4 +8,4 @@ sed -i '/^Account/ d' $1
 sed -i '/^Opening/ d' $1
 sed -i '/^Closing/ d' $1
 sed -i '1n;/^Txn/d' $1
-awk !a[$0]++ $1
+awk -i inplace !a[$0]++ $1
