@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-CUR=("USD" "EUR" "BRL" "AED" "AZN" "BRL" "CHF" "CLP" "EGP" "GTQ" "HKD" "IDR" "KES" "LKR" "LTL" "MAD" "MYR" "PHP" "QAR" "SGD" "THB" "TRY" "VND" "ZAR")
+CUR=("AED" "AZN" "BRL" "CHF" "CLP" "EGP" "EUR" "GTQ" "HKD" "IDR" "KES" "LKR" "LTL" "MAD" "MYR" "PHP" "QAR" "SGD" "THB" "TRY" "USD" "VND" "ZAR")
 for i in {0..22}
 do
   curl -s "https://www.alphavantage.co/query?function=CURRENCY_EXCHANGE_RATE&from_currency=${CUR[i]}&to_currency=INR&apikey=[apikey]" | \
