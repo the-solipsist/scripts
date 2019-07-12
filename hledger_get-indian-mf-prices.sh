@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-LEDGER_DIR=~/Accounts
-RATES_FILE=$LEDGER_DIR/rates.journal
+ledger_dir=$HOME/Accounts
+rates_file=$ledger_dir/rates.journal
 
 hledger stats | grep -o '\bINF\w*' > /tmp/hledger-mf-commodities
 
@@ -9,4 +9,4 @@ grep -f /tmp/hledger-mf-commodities | \
 tr -d '\r' | \
 awk -F";" '{printf("\"%s\" %s ",$2,"₹"$5);system("date -d "$8" +%Y-%m-%d");}' | \
 awk '{print "P",$3,$1,$2 }' | \
-tee -a $RATES_FILE
+tee -a $rates_file
