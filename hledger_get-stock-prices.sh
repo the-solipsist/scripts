@@ -2,16 +2,14 @@
 ledger_dir=~/Accounts
 rates_file=$LEDGER_DIR/rates.journal
 
+# Store API in a file named alphavantage-api that states `key=ZCDCI5WLTC3WE2BX` with your API key.
 . $ledger_dir/alphavantage-api.key
 
-hledger stats | grep -E '^Commodities' | grep -o '\b(NSE|BSE)\w*' > /tmp/hledger-stocks
+# I use "exchange:symbol" as the commodity name to make it easier to search online.
+# I couldn't find a way to make Alphavantage work with ISIN.
+# If you want to add more commodities, do so by adding to (NSE:|BSE:|NASDAQ:) and so on.
+hledger stats | grep -E '^Commodities' | grep -Eo '\b(NSE:|BSE:)\w*' > /tmp/hledger-stocks
 readarray -t stocks < /tmp/hledger-stocks
-
-
-for foreign_currency in "${foreign_currencies[@]}"
-do
-  curl -s  $site | \
-  extract_rate | \
 
 for stock in "${stocks[@]}"
 do
