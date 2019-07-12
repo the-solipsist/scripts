@@ -1,14 +1,14 @@
 #!/usr/bin/env bash
 ledger_dir=$HOME/Accounts
-all_j=$ledger_dir/all.journal
+all_file=$ledger_dir/all.journal
 rates_file=$ledger_dir/rates.journal
 
 if type ledger &>/dev/null
    then
-   ledger -f $all_j commodities | grep -o '\bSM\w*' > /tmp/ledger-nps-commodities
+   ledger -f $all_file commodities | grep -o '\bSM\w*' > /tmp/ledger-nps-commodities
 elif type hledger &>/dev/null
    then
-   hledger -f $all_j stats | grep -o '\bSM\w*' > /tmp/ledger-nps-commodities
+   hledger -f $all_file stats | grep -o '\bSM\w*' > /tmp/ledger-nps-commodities
 else
    echo "Neither ledger nor hledger is present"
 fi
