@@ -9,8 +9,21 @@ foreign_file=$ledger_dir/foreignholdings.journal
 all_file=$ledger_dir/all.journal
 . $ledger_dir/$service-api.key
 
-curl -s https://www.alphavantage.co/physical_currency_list/ | awk -F',' '{print $1}' > /tmp/currency-list
-hledger -f $all_file -f $foreign_file stats | grep -E '^Commodities' | grep -o -f /tmp/currency-list > /tmp/valid-currencies
+curl -s https://www.alphavantage.co/physical_currency_list/ | \
+awk -F',' '{print $1}' > /tmp/currency-list
+
+if type ledger &>/dev/null
+   then
+   ledger -f $all_file -f $foreign_file commodities --no-pager | \
+   grep -E '^Commodities' | grep -o -f /tmp/currency-list > /tmp/valid-currencies
+elif type hledger &>/dev/null
+   then
+   hledger -f $all_file -f $foreign_file stats | \
+   grep -E '^Commodities' | grep -o -f /tmp/currency-list > /tmp/valid-currencies
+else
+   echo "Neither ledger nor hledger is present"
+fi
+
 readarray -t foreign_currencies < /tmp/valid-currencies
 
 n=0
