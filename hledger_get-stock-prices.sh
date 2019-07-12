@@ -15,7 +15,7 @@ for stock in "${stocks[@]}"
 do
   curl -s "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=$stock&apikey=$key" | \
   jq -r '.[]."05. Price"' | \
-  awk -v c=$STOCK '{print "P",strftime("%Y-%m-%d"),"\""c"\"","₹"$1}' | \
+  awk -v c=$stock '{print "P",strftime("%Y-%m-%d"),"\""c"\"","₹"$1}' | \
   tee -a $rates_file
   sleep 15s #rate limit to keep the API happy
 done
