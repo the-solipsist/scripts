@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 ledger_dir=~/Accounts
-all_j=$ledger_dir/all.journal
+all_file=$ledger_dir/all.journal
 rates_file=$ledger_dir/rates.journal
 
 # Store API in a file named alphavantage-api that states `key=ZCDCI5WLTC3WE2BX` with your API key.
@@ -11,10 +11,10 @@ rates_file=$ledger_dir/rates.journal
 # If you want to add more commodities, do so by adding to (NSE:|BSE:|NASDAQ:) and so on.
 if type ledger &>/dev/null
    then
-   ledger -f $all_j commodities | grep -Eo '\b(NSE:|BSE:)\w*' > /tmp/ledger-stocks
+   ledger -f $all_file commodities | grep -Eo '\b(NSE:|BSE:)\w*' > /tmp/ledger-stocks
 elif type hledger &>/dev/null
    then
-   hledger -f $all_j stats | grep -E '^Commodities' | grep -Eo '\b(NSE:|BSE:)\w*' > /tmp/ledger-stocks
+   hledger -f $all_file stats | grep -E '^Commodities' | grep -Eo '\b(NSE:|BSE:)\w*' > /tmp/ledger-stocks
 else
    echo "Neither ledger nor hledger is present"
 fi
