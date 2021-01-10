@@ -10,7 +10,8 @@ all_file=$ledger_dir/all.journal
 . $ledger_dir/scripts/$service-api.key
 
 curl -s https://www.alphavantage.co/physical_currency_list/ | awk -F',' '{print $1}' > /tmp/currency-list
-hledger -f $all_file -f $foreign_file stats | grep -E '^Commodities' | grep -o -f /tmp/currency-list > /tmp/valid-currencies
+curl -s https://www.alphavantage.co/digital_currency_list/ | awk -F',' '{print $1}' >> /tmp/currency-list
+hledger -f $all_file -f $foreign_file stats | grep -E '^Commodities' | grep -w -o -f /tmp/currency-list > /tmp/valid-currencies
 readarray -t foreign_currencies < /tmp/valid-currencies
 
 n=0
