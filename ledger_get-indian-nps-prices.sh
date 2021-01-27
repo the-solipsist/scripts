@@ -1,7 +1,9 @@
 #!/usr/bin/env bash
 # Use the scheme ID (e.g. "SM001001") as the commodity symbol for the NPS units.
 # You can find the scheme ID from this website: https://npscra.nsdl.co.in/nav-search.php
-# The scheme IDs follow the pattern SMXXXYYY where XXX = PFM number and YYY = scheme number.
+# The scheme IDs follow the pattern SMXXXYYY 
+#     where XXX = PFM number (from 001 to 010, as of 2021-01-28) 
+#     and YYY = scheme number (from 001 to 014, depending on which schemes are offered by the PFM)
 ledger_dir=$HOME/accounts
 all_file=$ledger_dir/all.journal
 rates_file=$ledger_dir/rates.journal
