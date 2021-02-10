@@ -25,7 +25,8 @@ do
   d=$(date -d "- $n days" +%d%m%Y)
   CODE=$(curl -sL -w '%{http_code}' "https://npscra.nsdl.co.in/download/NAV_File_$d.zip" -o "/tmp/NAV_File_$d.zip")
   if [[ $CODE = 404 ]]; then
-    n=$[$n+1]
+    n=$[$n+1];
+    rm "/tmp/NAV_File_$d.zip";
   else
     n=-1
   fi
