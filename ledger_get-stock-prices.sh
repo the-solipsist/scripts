@@ -1,31 +1,41 @@
 #!/usr/bin/env bash
-ledger_dir=~/Accounts
-all_file=$ledger_dir/all.journal
-rates_file=$ledger_dir/rates.journal
 
-# Store API in a file named alphavantage-api that states `key=ZCDCI5WLTC3WE2BX` with your API key.
-. $ledger_dir/alphavantage-api.key
+LEDGER_DIR=~/accounts
+RATES_FILE=$LEDGER_DIR/rates_stocks.journal
 
-# I use "exchange:symbol" as the commodity name to make it easier to search online.
-# I couldn't find a way to make Alphavantage work with ISIN.
-# If you want to add more commodities, do so by adding to (NSE:|BSE:|NASDAQ:) and so on.
-if type ledger &>/dev/null
-   then
-   ledger -f $all_file commodities | grep -Eo '\b(NSE:|BSE:)\w*' > /tmp/ledger-stocks
-elif type hledger &>/dev/null
-   then
-   hledger -f $all_file stats | grep -E '^Commodities' | grep -Eo '\b(NSE:|BSE:)\w*' > /tmp/ledger-stocks
-else
-   echo "Neither ledger nor hledger is present"
-fi
+hledger commodities | grep -o '\bIN\w*' > /tmp/hledger-stock-commodities
 
-readarray -t stocks < /tmp/ledger-stocks
+n=0
+URL="https://www1.nseindia.com/content/historical/EQUITIES"
+UA="Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/71.0.3578.98 Safari/537.36"
+REF="https://www1.nseindia.com/products/content/equities/equities/archieve_eq.htm"
 
-for stock in "${stocks[@]}"
+while [ $n -gt -1 ]
 do
-  curl -s "https://www.alphavantage.co/query?function=GLOBAL_QUOTE&symbol=$stock&apikey=$key" | \
-  jq -r '.[]."05. Price"' | \
-  awk -v c=$stock '{print "P",strftime("%Y-%m-%d"),"\""c"\"","₹"$1}' | \
-  tee -a $rates_file
-  sleep 15s #rate limit to keep the API happy
+  date=$(date -d "- $n days" +%d)
+  month=$(date -d "- $n days" +%b)
+  month=${month^^}
+  year=$(date -d "- $n days" +%Y)
+  CODE=$(curl -sL -w '%{http_code}' "$URL/$year/$month/cm$date$month${year}bhav.csv.zip" --referer "$REF" --user-agent "$UA" --output "/tmp/cm${date}${month}${year}bhav.csv.zip")
+   if [[ $CODE = 200 ]]; then
+    n=-1
+    echo $CODE
+   else
+    n=$[$n+1]
+    echo $REF
+    echo "$URL/$year/$month/cm${date}${month}${year}bhav.csv.zip"
+    echo $CODE
+   fi
 done
+
+bsdtar -xf "/tmp/cm$date$month${year}bhav.csv.zip" -C /tmp/ ;
+
+cat /tmp/cm*.csv | \
+grep -f /tmp/hledger-stock-commodities | \
+sort | \
+tr -d '\r' | \
+awk -F"," '{printf("\"%s\";%s;%s;",$13,"₹"$6,$1);system("date -d "$11" +%Y-%m-%d");}' | \
+awk -F";" '{print "P",$4,$1,$2 "\t""  ; "$3}' | \
+sponge -a $RATES_FILE
+rm /tmp/cm*.csv
+awk ' !x[$0]++' $RATES_FILE | tail -n 10
