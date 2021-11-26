@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-#service="alphavantage" base_currency="USD" base_symbol="USD "
-
 service="coingecko"
 base_currency=("INR" "USD")
 base_symbol=("₹" "USD ")
@@ -58,4 +56,5 @@ for bc in "${base_currency[@]}"
   printf "n = $n\n"
 done
 
-awk ' !x[$0]++' $rates_file | tail -n 10
+awk ' !x[$0]++' $rates_file | sponge $rates_file
+tail -n 20 $rates_file
