@@ -38,4 +38,5 @@ awk -F"," '{printf("\"%s\";%s;%s;",$13,"₹"$6,$1);system("date -d "$11" +%Y-%m-
 awk -F";" '{print "P",$4,$1,$2 "\t""  ; "$3}' | \
 sponge -a $RATES_FILE
 rm /tmp/cm*.csv
-awk ' !x[$0]++' $RATES_FILE | tail -n 10
+awk ' !x[$0]++' $RATES_FILE | sponge $RATES_FILE
+tail -n 10 $RATES_FILE
