@@ -6,19 +6,19 @@
 #     and YYY = scheme number (from 001 to 014, depending on which schemes are offered by the PFM)
 LEDGER_DIR=~/accounts
 RATES_FILE=$LEDGER_DIR/rates_nps.journal
-#all_file=$ledger_dir/all.journal
+#journal=$ledger_dir/latest.journal
 
 #if type ledger &>/dev/null
 #   then
-#   ledger -f $all_file commodities | grep -o '\bSM\w*' > /tmp/ledger-nps-commodities
+#   ledger -f $journal commodities | grep -o '\bSM\w*' > /tmp/ledger-nps-commodities
 #elif type hledger &>/dev/null
 #   then
-#   hledger -f $all_file commodities | grep -o '\bSM\w*' > /tmp/ledger-nps-commodities
+#   hledger -f $journal commodities | grep -o '\bSM\w*' > /tmp/ledger-nps-commodities
 #else
 #   printf "Neither ledger nor hledger is present"
 #fi
 
-hledger stats | grep "^Commodities" | grep -o '\bSM\w*' > /tmp/hledger-nps-commodities
+hledger commodities | grep -o '\bSM\w*' > /tmp/hledger-nps-commodities
 
 n=0
 
